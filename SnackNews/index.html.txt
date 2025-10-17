@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Newsflash – Kurz & knapp</title>
+  <meta name="description" content="Superkurze tägliche Nachrichten: National & International, max. 5 Minuten Lesezeit. Mobil-optimiert und mit Werbeplätzen.">
+  <style>
+    :root{--bg:#0b0c10;--panel:#111217;--ink:#e7e9ee;--muted:#a2a9b6;--accent:#7bb3ff;--line:#1e2233}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Noto Sans",sans-serif;line-height:1.55}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{position:sticky;top:0;z-index:40;background:rgba(17,18,23,.85);backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid var(--line)}
+    .wrap{max-width:1100px;margin:auto;padding:16px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand b{font-size:18px}
+    .muted{color:var(--muted)}
+
+    /* Layout: side-rails for ads */
+    .rails{position:fixed;top:60px;bottom:0;left:0;right:0;pointer-events:none}
+    .rail{position:fixed;top:64px;bottom:0;width:160px;pointer-events:auto;display:flex;align-items:flex-start;justify-content:center;padding:8px}
+    .rail.left{left:0}
+    .rail.right{right:0}
+    @media (max-width: 1200px){ .rail{display:none} }
+
+    .grid{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
+    @media (min-width: 980px){ .grid{grid-template-columns:2fr 1fr} }
+
+    main,aside{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+    h1{margin:.2em 0 .4em;font-size:clamp(22px,3.4vw,34px)}
+    h2{margin:1.2em 0 .4em;font-size:clamp(18px,2.2vw,24px)}
+    p{margin:.6em 0;color:#d9dfea}
+    ul{margin:.4em 0 .8em 1.2em}
+
+    /* Buttons */
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid var(--line);background:#15192a;color:var(--ink);padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600}
+    .btn.primary{background:var(--accent);border-color:var(--accent);color:#0a0f22}
+
+    /* Ad blocks – placeholders; reserve height to prevent CLS */
+    .ad{display:block;width:100%;margin:12px 0;border-radius:12px;overflow:hidden;background:#0e0f14;border:1px dashed #2b3042;position:relative}
+    .ad::before{content:attr(data-label);position:absolute;top:6px;left:8px;font-size:12px;color:var(--muted);background:#0e0f14;padding:2px 6px;border-radius:999px;border:1px solid #2b3042}
+    .ad.billboard{height:250px}
+    .ad.leader{height:90px}
+    .ad.mrec{height:250px}
+    .ad.sky{height:600px;width:120px}
+    @media (max-width: 768px){ .ad.leader{height:100px} .ad.billboard{height:250px} }
+
+    /* Cards for sections */
+    .card{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#0f131f}
+    .item{margin:.3em 0}
+    .small{font-size:13px}
+
+    /* Footer */
+    footer{color:var(--muted)}
+
+    /* Simple views */
+    [data-view]{display:none}
+    [data-view].active{display:block}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap brand" aria-label="Kopfzeile">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#7bb3ff" stroke-width="2"/><path d="M7 13l3 3 7-7" stroke="#7bb3ff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <b>Newsflash</b>
+      <span class="muted" id="stamp">Newsflash — TT.MM.JJJJ</span>
+    </div>
+  </header>
+
+  <!-- Fixed side rails (desktop only) -->
+  <div class="rails" aria-hidden="true">
+    <div class="rail left"><div class="ad sky" id="ad-left" data-label="Werbung – Left Rail (160×600)"></div></div>
+    <div class="rail right"><div class="ad sky" id="ad-right" data-label="Werbung – Right Rail (160×600)"></div></div>
+  </div>
+
+  <div class="wrap" style="margin-top:16px">
+    <!-- Top ad -->
+    <div class="ad billboard" id="ad-top" data-label="Werbung – Top (970×250 / 320×100)"></div>
+
+    <!-- HOME VIEW -->
+    <section data-view="home" class="active">
+      <main>
+        <h1 id="headline">Newsflash <span class="muted small" id="dateLine">TT.MM.JJJJ, HH:MM</span></h1>
+        <p class="muted">Die wichtigsten Schlagzeilen des Tages, komprimiert. Max. 5 Minuten Lesezeit.</p>
+        <div class="row" role="group" aria-label="Ressorts wählen">
+          <button class="btn primary" data-nav="national">National</button>
+          <button class="btn" data-nav="international">International</button>
+        </div>
+        <div class="ad mrec" id="ad-home-mrec" data-label="Werbung – In‑Page (300×250)"></div>
+        <div class="card small">
+          <b>Hinweis zur Lesezeit:</b> Jede Seite enthält 5 Ressorts mit je 1–2 ultrakurzen Stichpunkten. Ziel: ≤ 5 Minuten.
+        </div>
+      </main>
+      <aside>
+        <h2>Mehr</h2>
+        <p class="muted">Abonniere unseren Newsletter (optional) oder speichere die Seite als App (Add to Home Screen).</p>
+        <div class="ad mrec" id="ad-side-home" data-label="Werbung – Sidebar (300×250)"></div>
+      </aside>
+    </section>
+
+    <!-- NATIONAL VIEW -->
+    <section data-view="national">
+      <main>
+        <h1>National</h1>
+        <div id="nationalFeed"></div>
+        <div class="ad leader" id="ad-national-bottom" data-label="Werbung – Bottom (728×90 / 320×100)"></div>
+        <div class="row"><button class="btn" data-nav="home">Zurück</button></div>
+      </main>
+      <aside>
+        <h2>Ressorts</h2>
+        <ul class="muted small" id="nationalToc"></ul>
+        <div class="ad mrec" id="ad-national-side" data-label="Werbung – Sidebar (300×250)"></div>
+      </aside>
+    </section>
+
+    <!-- INTERNATIONAL VIEW -->
+    <section data-view="international">
+      <main>
+        <h1>International</h1>
+        <div id="internationalFeed"></div>
+        <div class="ad leader" id="ad-international-bottom" data-label="Werbung – Bottom (728×90 / 320×100)"></div>
+        <div class="row"><button class="btn" data-nav="home">Zurück</button></div>
+      </main>
+      <aside>
+        <h2>Ressorts</h2>
+        <ul class="muted small" id="internationalToc"></ul>
+        <div class="ad mrec" id="ad-international-side" data-label="Werbung – Sidebar (300×250)"></div>
+      </aside>
+    </section>
+
+    <!-- Bottom ad -->
+    <div class="ad leader" id="ad-bottom" data-label="Werbung – Bottom (728×90 / 320×100)"></div>
+
+    <footer style="margin:24px 0 12px">© 2025 Newsflash • <a href="#" aria-label="Impressum">Impressum</a> • <a href="#" aria-label="Datenschutz">Datenschutz</a></footer>
+  </div>
+
+  <!-- Consent banner (Minimal-Demo) -->
+  <div id="consent" style="position:fixed;inset:auto 12px 12px 12px;z-index:60;display:none">
+    <div style="background:#0f1118;border:1px solid #292e43;border-radius:16px;padding:16px;box-shadow:0 10px 28px rgba(0,0,0,.45)">
+      <b>Cookies & Werbung</b>
+      <p>Wir nutzen Cookies für Anzeigen & Reichweitenmessung. Du kannst zustimmen oder ablehnen. Bei Ablehnung zeigen wir ggf. nicht‑personalisierte Werbung.</p>
+      <div class="row">
+        <button class="btn" id="btn-decline">Ablehnen</button>
+        <button class="btn" id="btn-npa">Nur nicht‑personalisiert</button>
+        <button class="btn primary" id="btn-accept">Einverstanden</button>
+      </div>
+      <p class="small muted">Für Produktion bitte eine IAB‑konforme CMP (TCF v2.2) nutzen.</p>
+    </div>
+  </div>
+
+  <script>
+    // --- Utilities ---
+    const fmt2 = (n)=> String(n).padStart(2,'0');
+    const now = new Date();
+    const stamp = `${fmt2(now.getDate())}.${fmt2(now.getMonth()+1)}.${now.getFullYear()} ${fmt2(now.getHours())}:${fmt2(now.getMinutes())}`;
+    document.getElementById('stamp').textContent = `Newsflash — ${stamp}`;
+    document.getElementById('dateLine').textContent = stamp;
+
+    // --- Minimal router (hash-based) ---
+    const views = Array.from(document.querySelectorAll('[data-view]'));
+    function setView(name){
+      views.forEach(v=>v.classList.toggle('active', v.getAttribute('data-view')===name));
+      location.hash = name==='home' ? '' : `#/${name}`;
+      window.scrollTo({top:0,behavior:'instant'});
+    }
+    function initRoute(){
+      const h = location.hash.replace('#/','');
+      if(h==='national' || h==='international') setView(h); else setView('home');
+    }
+    addEventListener('hashchange', initRoute);
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-nav]');
+      if(btn){ e.preventDefault(); setView(btn.getAttribute('data-nav')); }
+    });
+
+    // --- Content model: 5 Ressorts × 1–2 kurze Items ---
+    // ⚠️ Ersetze die Inhalte täglich. Maximal sehr kurz halten (zusammen ≤ 5 Min Lesezeit).
+    const data = {
+      national: [
+        { title: 'Politik', items: [
+          'Koalition einigt sich auf Eckpunkte zum Haushalt 2026; Details folgen kommende Woche.',
+          'Bund-Länder-Runde beschließt mehr Mittel für Kommunen bei Unterkünften.'
+        ]},
+        { title: 'Wirtschaft', items: [
+          'Industrieproduktion legt leicht zu; Auftragseingänge stabilisieren sich.',
+        ]},
+        { title: 'Gesellschaft', items: [
+          'Lehrkräftemangel: Länder planen Quereinsteiger‑Programm auszubauen.'
+        ]},
+        { title: 'Digital', items: [
+          'Neuer ID‑Service der Verwaltung startet Pilot in zwei Bundesländern.'
+        ]},
+        { title: 'Sport', items: [
+          'Bundesliga: Topspiel endet remis; Tabellenführung bleibt knapp.'
+        ]},
+      ],
+      international: [
+        { title: 'Europa', items: [
+          'EU‑Gipfel berät über Wettbewerbsagenda und Verteidigungspartnerschaften.'
+        ]},
+        { title: 'USA', items: [
+          'US‑Notenbank signalisiert vorsichtige Haltung vor nächsten Zinsentscheidungen.'
+        ]},
+        { title: 'Asien', items: [
+          'Technologiesektor meldet starke Exporte aus Südkorea.'
+        ]},
+        { title: 'Nahost', items: [
+          'Vermittlungsgespräche über Grenzöffnungen werden fortgesetzt.'
+        ]},
+        { title: 'Klima & Wissenschaft', items: [
+          'Forscher berichten über Durchbruch bei energieeffizienter Kühlung.'
+        ]},
+      ]
+    };
+
+    // Render helper
+    function renderRessorts(list, mountId, tocId){
+      const mount = document.getElementById(mountId);
+      const toc = document.getElementById(tocId);
+      mount.innerHTML = '';
+      toc.innerHTML = '';
+      list.forEach((res, idx)=>{
+        const card = document.createElement('section');
+        card.className = 'card';
+        const anchor = `r${idx}`;
+        card.innerHTML = `<h2 id="${anchor}">${res.title}</h2>` + res.items.map(i=>`<p class="item">• ${i}</p>`).join('');
+        mount.appendChild(card);
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="#${anchor}">${res.title}</a>`;
+        toc.appendChild(li);
+      });
+    }
+
+    renderRessorts(data.national, 'nationalFeed', 'nationalToc');
+    renderRessorts(data.international, 'internationalFeed', 'internationalToc');
+
+    // --- Consent & Ads (Demo) ---
+    const CONSENT_KEY = 'consent-v1';
+    const $banner = document.getElementById('consent');
+    const $accept = document.getElementById('btn-accept');
+    const $decline = document.getElementById('btn-decline');
+    const $npa = document.getElementById('btn-npa');
+
+    function choice(){ try{return JSON.parse(localStorage.getItem(CONSENT_KEY))}catch(e){return null} }
+    function saveChoice(v){ localStorage.setItem(CONSENT_KEY, JSON.stringify(v)); }
+    function show(){ $banner.style.display='block' }
+    function hide(){ $banner.style.display='none' }
+
+    function loadAds(nonPersonalized){
+      // Beispielhaft für Google AdSense – ersetze IDs durch echte Werte.
+      if(document.getElementById('adsbygoogle-lib')) return;
+      const s=document.createElement('script');
+      s.id='adsbygoogle-lib'; s.async=true; s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX'; s.crossOrigin='anonymous';
+      document.head.appendChild(s);
+      s.addEventListener('load', ()=>{
+        const slots = ['ad-top','ad-bottom','ad-home-mrec','ad-side-home','ad-national-bottom','ad-national-side','ad-international-bottom','ad-international-side','ad-left','ad-right'];
+        slots.forEach((id, i)=>{
+          const host = document.getElementById(id); if(!host) return;
+          const ins = document.createElement('ins');
+          ins.className='adsbygoogle'; ins.style.display='block';
+          ins.setAttribute('data-ad-client','ca-pub-XXXX');
+          ins.setAttribute('data-ad-slot', String(1000000000+i));
+          ins.setAttribute('data-full-width-responsive','true');
+          if(nonPersonalized) ins.setAttribute('data-npa','1');
+          host.replaceWith(ins);
+          try{ (adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){ console.warn(e); }
+        });
+      });
+    }
+
+    function onConsent(){
+      const c = choice();
+      if(!c){ show(); return; }
+      hide();
+      loadAds(c.mode!=='accept'); // npa=true wenn nicht akzeptiert
+    }
+
+    $accept.addEventListener('click', ()=>{ saveChoice({mode:'accept',ts:Date.now()}); onConsent(); });
+    $decline.addEventListener('click', ()=>{ saveChoice({mode:'decline',ts:Date.now()}); onConsent(); });
+    $npa.addEventListener('click', ()=>{ saveChoice({mode:'npa',ts:Date.now()}); onConsent(); });
+
+    // Init
+    initRoute();
+    setTimeout(onConsent, 800);
+  </script>
+</body>
+</html>
